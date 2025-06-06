@@ -80,7 +80,11 @@ if menu == "📡 Live Feed":
     st.header("📡 Live Sneaker Drop Feed")
     st.markdown("Only **verified, real-time** sneaker drop listings from trusted sources are shown here. No simulations.")
 
-    trusted_sources = ["Nike SNKRS", "Adidas Confirmed", "SoleLinks", "Sneaker News"]
+    trusted_sources = [
+        "Nike SNKRS", "Adidas Confirmed", "SoleLinks", "Sneaker News", "END. Clothing", "Foot Locker",
+        "Finish Line", "JD Sports", "BSTN Store", "SNS", "Hanon Shop", "KITH", 
+        "Dover Street Market", "Union LA", "A Ma Maniére"
+    ]
 
     def get_live_drops():
         return [
@@ -89,33 +93,32 @@ if menu == "📡 Live Feed":
                 "release_time": "2025-06-06 14:00",
                 "source": "Nike SNKRS",
                 "link": "https://www.nike.com/launch/jordan-chicago",
-                "verified": True
             },
             {
                 "model": "Yeezy Boost 350 V2 'Zebra'",
                 "release_time": "2025-06-06 15:00",
                 "source": "Sneaker News",
                 "link": "https://sneakernews.com/yeezy-zebra",
-                "verified": True
             },
             {
                 "model": "Puma MB.03 'Galaxy'",
                 "release_time": "2025-06-06 13:45",
                 "source": "Unknown Blog",
                 "link": "https://unknownblog.xyz/drops/mb03",
-                "verified": False
             }
         ]
 
     verified_only = st.checkbox("✅ Show Verified Only", value=True)
 
     for drop in get_live_drops():
-        if verified_only and not drop["verified"]:
+        is_verified = drop["source"] in trusted_sources
+        if verified_only and not is_verified:
             continue
+        badge = "🟢 VERIFIED" if is_verified else "🔴 UNVERIFIED"
         st.markdown(f"""
 ### 🔥 {drop['model']}
 - ⏰ **Drop Time:** {drop['release_time']}
-- 🌐 **Source:** {drop['source']} {'✅' if drop['verified'] else '❌'}
+- 🌐 **Source:** {drop['source']} ({badge})
 - 🔗 [Visit Drop Page]({drop['link']})
 ---
 """)
