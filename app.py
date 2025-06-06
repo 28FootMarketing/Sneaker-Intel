@@ -125,3 +125,39 @@ if menu == "📡 Live Feed":
 
     st.caption(f"Last checked: {dt.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
+import streamlit as st
+import requests
+
+def get_goat_resale(query):
+    url = "https://sneaker-database-stockx.p.rapidapi.com/goat-search"
+    headers = {
+        "x-rapidapi-host": "sneaker-database-stockx.p.rapidapi.com",
+        "x-rapidapi-key": "65c895878fmshe94463f4773fd3ap1711a1jsn0e9fa0d33a59"
+    }
+    params = {"query": query}
+    
+    response = requests.get(url, headers=headers, params=params)
+    
+    if response.status_code == 200:
+        return response.json()
+    else:
+        st.error(f"Error: {response.status_code}")
+        return None
+
+# Streamlit UI
+st.title("📈 FlipIQ – Live GOAT Resale Estimator")
+
+sneaker_query = st.text_input("Enter sneaker name", "Yeezy")
+
+if sneaker_query:
+    result = get_goat_resale(sneaker_query)
+    if result and "Data" in result:
+        for item in result["Data"][:3]:  # Show top 3 results
+            st.image(item.get("media", {}).get("imageUrl", ""), width=250)
+            st.markdown(f"### {item.get('name', 'N/A')}")
+            st.markdown(f"🛍 Retail: {item.get('retailPrice', 'N/A')}")
+            st.markdown(f"💰 Resale: {item.get('resalePrice', 'N/A')}")
+            st.markdown(f"🔗 [View on GOAT]({item.get('url', '#')})")
+            st.markdown("---")
+    else:
+        st.warning("No resale data found or rate limit reached.")
