@@ -89,7 +89,7 @@ if menu == "📡 Live Feed":
         ]
         selected = random.sample(drops, 3)
         for drop in selected:
-            st.markdown(f"**Model:** {drop['model']}  
+            st.marst.markdown(f"**Model:** {drop['model']}
 **Date:** {drop['date']}  
 **Site:** {drop['site']}  
 **Est. Resale:** {drop['resale']}")
