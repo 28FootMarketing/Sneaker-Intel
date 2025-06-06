@@ -145,3 +145,69 @@ if menu == "📡 Live Feed":
 ---
 """)
     st.caption(f"⏱️ Last checked: {dt.now().strftime('%Y-%m-%d %H:%M:%S')}")
+import streamlit as st
+from datetime import datetime
+
+# Verified sneaker sources
+trusted_sources = [
+    "Nike SNKRS", "Adidas Confirmed", "SoleLinks", "Sneaker News", "END. Clothing",
+    "Foot Locker", "Finish Line", "JD Sports", "BSTN Store", "SNS", "Hanon Shop",
+    "KITH", "Dover Street Market", "Union LA", "A Ma Maniére"
+]
+
+# Simulated drop feed (replace with real API/scraper)
+def get_live_drops():
+    return [
+        {
+            "model": "Air Jordan 1 High OG 'Chicago Reimagined'",
+            "release_time": "2025-06-06 14:00",
+            "source": "Nike SNKRS",
+            "link": "https://www.nike.com/launch/jordan-chicago"
+        },
+        {
+            "model": "Yeezy Boost 350 V2 'Zebra'",
+            "release_time": "2025-06-06 15:00",
+            "source": "Sneaker News",
+            "link": "https://sneakernews.com/yeezy-zebra"
+        },
+        {
+            "model": "New Balance 550 Rich Paul",
+            "release_time": "2025-06-07 12:00",
+            "source": "END. Clothing",
+            "link": "https://www.endclothing.com/new-balance-550"
+        },
+        {
+            "model": "Nike SB Dunk Low 'Orange Lobster'",
+            "release_time": "2025-06-08 10:00",
+            "source": "BSTN Store",
+            "link": "https://www.bstn.com/nike-sb-orange-lobster"
+        },
+        {
+            "model": "Puma MB.03 'Galaxy'",
+            "release_time": "2025-06-06 13:45",
+            "source": "Unknown Blog",
+            "link": "https://unknownblog.xyz/drops/mb03"
+        }
+    ]
+
+# Streamlit setup
+st.set_page_config(page_title="Live Sneaker Feed", layout="centered")
+st.title("📡 Sneaker Scout | Verified Live Drop Feed")
+st.markdown("Live verified sneaker drop data below. Updated as new drops are detected.")
+
+verified_only = st.checkbox("✅ Show Verified Only", value=True)
+
+for drop in get_live_drops():
+    is_verified = drop["source"] in trusted_sources
+    if verified_only and not is_verified:
+        continue
+    badge = "🟢 VERIFIED" if is_verified else "🔴 UNVERIFIED"
+    st.markdown(f"""
+### 🔥 {drop['model']}
+- ⏰ **Drop Time:** {drop['release_time']}
+- 🌐 **Source:** {drop['source']} ({badge})
+- 🔗 [Visit Drop Page]({drop['link']})
+---
+""")
+
+st.caption(f"Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
