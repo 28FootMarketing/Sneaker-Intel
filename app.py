@@ -40,7 +40,7 @@ for agent in agents:
     st.subheader(f"🤖 {agent['name']} – {agent['role']}")
     st.write(agent['description'])
     st.markdown("---")
-import streamlit as st
+
 
 st.set_page_config(page_title="Sneaker Scout Dashboard", layout="wide")
 st.title("🏠 Sneaker Scout Dashboard Home")
