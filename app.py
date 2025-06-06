@@ -89,15 +89,10 @@ if menu == "📡 Live Feed":
         ]
         selected = random.sample(drops, 3)
         for drop in selected:
-            st.markdown(f"""
-**Model:** {drop['model']}  
+            st.markdown(f"""**Model:** {drop['model']}  
 **Date:** {drop['date']}  
 **Site:** {drop['site']}  
-**Est. Resale:** {drop['resale']}
-""")
-**Date:** {drop['date']}  
-**Site:** {drop['site']}  
-**Est. Resale:** {drop['resale']}")
+**Est. Resale:** {drop['resale']}""")
             st.markdown("---")
     else:
         st.warning("Click the button above to simulate live drop scraping.")
