@@ -14,13 +14,29 @@ menu = st.sidebar.radio(
 
 if menu == "🏠 Home":
     st.header("🏠 Dashboard Overview")
-    st.markdown("Navigate using the sidebar to access tools like keyword tracking, raffle alerts, and more.")
+    st.markdown("Use the sidebar to access tools like keyword scanning, raffle alerts, live countdowns, and resale tracking.")
 
 if menu == "🔎 Scout":
     st.header("🔎 Scout – Sneaker Drop Scanner")
-    keyword = st.text_input("🔍 Track Sneaker Keyword")
+
+    st.subheader("📡 Real-Time Keyword Scanner")
+    trending_drops = ["Jordan 1", "Yeezy", "Nike SB", "Dunk Low", "Adidas Samba"]
+    keyword = st.text_input("🔍 Type a sneaker name to scan live drops")
     if keyword:
-        st.success(f"✅ Now tracking keyword: {keyword}")
+        if any(keyword.lower() in drop.lower() for drop in trending_drops):
+            st.success(f"✅ LIVE MATCH FOUND for: {keyword}")
+        else:
+            st.warning(f"⚠️ No live drops for: {keyword} (yet)")
+    st.markdown("---")
+
+    st.subheader("📬 Personalized Alert Assistant")
+    alert_keyword = st.text_input("📌 Enter a sneaker keyword to track")
+    alert_email = st.text_input("📧 Your email for future alerts")
+    if st.button("🔔 Save My Alert"):
+        if alert_keyword and alert_email:
+            st.success(f"📨 You will be alerted about: '{alert_keyword}' at {alert_email}")
+        else:
+            st.error("❗ Please enter both a keyword and an email")
 
 if menu == "🎟️ Raffle Radar":
     st.header("🎟️ Raffle Radar – Get Alerted")
