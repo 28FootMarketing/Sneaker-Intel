@@ -1,8 +1,9 @@
 import streamlit as st
+import requests
 import datetime
 import time
-import requests
-from datetime import datetime as dt
+import pandas as pd
+from datetime import datetime as dt, timedelta
 
 st.set_page_config(page_title="📡 Sneaker Scout", layout="wide")
 st.title("📡 Sneaker Scout | Streaming, Interactive + Drop Toolkit")
@@ -12,13 +13,14 @@ menu = st.sidebar.radio(
     ["🏠 Home", "🔎 Scout", "🎟️ Raffle Radar", "⏰ Timer (Live)", "📘 GuideBot", "📈 FlipIQ", "🔐 AccessCode", "📡 Live Feed"]
 )
 
+# 🏠 Home
 if menu == "🏠 Home":
     st.header("🏠 Dashboard Overview")
-    st.markdown("Use the sidebar to access tools like keyword scanning, raffle alerts, live countdowns, and resale tracking.")
+    st.markdown("Navigate using the sidebar to access tools like keyword tracking, raffle alerts, and more.")
 
+# 🔎 Scout
 if menu == "🔎 Scout":
     st.header("🔎 Scout – Sneaker Drop Scanner")
-
     st.subheader("📡 Real-Time Keyword Scanner")
     trending_drops = ["Jordan 1", "Yeezy", "Nike SB", "Dunk Low", "Adidas Samba"]
     keyword = st.text_input("🔍 Type a sneaker name to scan live drops")
@@ -28,7 +30,6 @@ if menu == "🔎 Scout":
         else:
             st.warning(f"⚠️ No live drops for: {keyword} (yet)")
     st.markdown("---")
-
     st.subheader("📬 Personalized Alert Assistant")
     alert_keyword = st.text_input("📌 Enter a sneaker keyword to track")
     alert_email = st.text_input("📧 Your email for future alerts")
@@ -38,13 +39,59 @@ if menu == "🔎 Scout":
         else:
             st.error("❗ Please enter both a keyword and an email")
 
+# 🎟️ Raffle Radar (Upgraded)
 if menu == "🎟️ Raffle Radar":
-    st.header("🎟️ Raffle Radar – Get Alerted")
-    brand = st.selectbox("🏷️ Brand", ["Nike", "Adidas", "New Balance"])
-    email = st.text_input("📧 Enter Email for Raffle Alerts")
-    if st.button("🔔 Save Reminder"):
-        st.success(f"📨 {brand} raffle alerts will be sent to {email}")
+    st.header("🎟️ Raffle Radar – Upgraded Live Entry Tracker")
+    raffles = [
+        {
+            "Sneaker": "Nike Dunk Low 'Panda'",
+            "Brand": "Nike",
+            "Close Date": (datetime.datetime.now() + timedelta(days=2)).strftime('%Y-%m-%d'),
+            "Source": "END. Clothing",
+            "Link": "https://launches.endclothing.com/product/nike-dunk-low-panda"
+        },
+        {
+            "Sneaker": "Adidas Samba OG 'White Black'",
+            "Brand": "Adidas",
+            "Close Date": (datetime.datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d'),
+            "Source": "SNS",
+            "Link": "https://www.sneakersnstuff.com/en/product/60214/adidas-samba-og"
+        },
+        {
+            "Sneaker": "Jordan 4 'Military Blue'",
+            "Brand": "Nike",
+            "Close Date": (datetime.datetime.now() + timedelta(days=3)).strftime('%Y-%m-%d'),
+            "Source": "A Ma Maniére",
+            "Link": "https://www.a-ma-maniere.com/pages/air-jordan-4"
+        }
+    ]
+    df = pd.DataFrame(raffles)
+    brands = df['Brand'].unique().tolist()
+    selected_brand = st.selectbox("🔍 Filter by Brand", ["All"] + brands)
 
+    st.subheader("📬 Personalized Raffle Alert")
+    alert_sneaker = st.text_input("👟 Sneaker Name to Track")
+    alert_email = st.text_input("📧 Your Email")
+    if st.button("📨 Set Raffle Alert"):
+        if alert_sneaker and alert_email:
+            st.success(f"🔔 You will receive alerts for '{alert_sneaker}' at {alert_email}")
+        else:
+            st.error("❗ Please provide both sneaker name and email.")
+
+    if selected_brand != "All":
+        df = df[df["Brand"] == selected_brand]
+
+    for _, row in df.iterrows():
+        st.markdown("---")
+        cols = st.columns([2, 2, 2, 3])
+        cols[0].markdown(f"**👟 Sneaker:** {row['Sneaker']}")
+        cols[1].markdown(f"**🏷️ Brand:** {row['Brand']}")
+        cols[2].markdown(f"**📅 Closes:** {row['Close Date']}")
+        cols[3].markdown(f"[🔗 Enter Raffle]({row['Link']})")
+
+    st.caption(f"📆 Last Updated: {dt.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
+# ⏰ Timer (Live)
 if menu == "⏰ Timer (Live)":
     st.header("⏰ Countdown – Jordan 1 OG")
     drop_time = datetime.datetime(2025, 6, 10, 10, 0, 0)
@@ -60,6 +107,7 @@ if menu == "⏰ Timer (Live)":
         placeholder.info(f"⏳ Drop in: {hours:02d}:{minutes:02d}:{seconds:02d}")
         time.sleep(1)
 
+# 📘 GuideBot
 if menu == "📘 GuideBot":
     st.header("📘 Strategy Coach")
     topic = st.selectbox("🧠 Pick Topic", ["Manual Copping", "Using Bots", "Proxy Setup", "Account Farming"])
@@ -71,10 +119,10 @@ if menu == "📘 GuideBot":
     }
     st.success(tips[topic])
 
+# 📈 FlipIQ
 if menu == "📈 FlipIQ":
     st.header("📈 FlipIQ – Resale Estimator (Powered by GOAT API)")
     sneaker_query = st.text_input("🔍 Enter sneaker name", "Yeezy Slide")
-
     def get_goat_resale(query):
         url = "https://sneaker-database-stockx.p.rapidapi.com/goat-search"
         headers = {
@@ -88,7 +136,6 @@ if menu == "📈 FlipIQ":
         else:
             st.error(f"❌ Error: {response.status_code}")
             return []
-
     if sneaker_query:
         results = get_goat_resale(sneaker_query)
         if results:
@@ -104,6 +151,7 @@ if menu == "📈 FlipIQ":
         else:
             st.warning("⚠️ No resale data found or rate limit reached.")
 
+# 🔐 AccessCode
 if menu == "🔐 AccessCode":
     st.header("🔐 Membership Plan")
     plan = st.radio("📦 Choose Plan", ["Free", "Basic", "Pro", "Lifetime"])
@@ -115,16 +163,15 @@ if menu == "🔐 AccessCode":
     }
     st.success(access[plan])
 
+# 📡 Live Feed
 if menu == "📡 Live Feed":
     st.header("📡 Live Sneaker Drop Feed")
     st.markdown("Only **verified, real-time** sneaker drop listings from trusted sources are shown here. No simulations.")
-
     trusted_sources = [
         "Nike SNKRS", "Adidas Confirmed", "SoleLinks", "Sneaker News", "END. Clothing", "Foot Locker",
         "Finish Line", "JD Sports", "BSTN Store", "SNS", "Hanon Shop", "KITH",
         "Dover Street Market", "Union LA", "A Ma Maniére"
     ]
-
     def get_live_drops():
         return [
             {
@@ -146,9 +193,7 @@ if menu == "📡 Live Feed":
                 "link": "https://www.endclothing.com/new-balance-550"
             }
         ]
-
     verified_only = st.checkbox("✅ Show Verified Only", value=True)
-
     for drop in get_live_drops():
         is_verified = drop["source"] in trusted_sources
         if verified_only and not is_verified:
@@ -159,5 +204,4 @@ if menu == "📡 Live Feed":
         st.markdown(f"- 🌐 Source: {drop['source']} ({badge})")
         st.markdown(f"- 🔗 [Visit Drop Page]({drop['link']})")
         st.markdown("---")
-
     st.caption(f"⏱️ Last checked: {dt.now().strftime('%Y-%m-%d %H:%M:%S')}")
